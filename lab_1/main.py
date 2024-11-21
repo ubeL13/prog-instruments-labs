@@ -61,6 +61,7 @@ async def worker_add_orders(message: types.Message):
         except IndexError:
             pass
 
+
 @dp.message_handler(commands=['help'])
 async def send_help(message: types.Message):
     help_text = (
