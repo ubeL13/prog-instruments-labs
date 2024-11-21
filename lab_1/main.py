@@ -7,18 +7,18 @@ from config import *
 from utils import (profile_text, ref_text, pay_text, get_all_mamonts, add_mamont)
 
 bot = Bot(token=API_TOKEN)
-dp = Dispatcher(bot)
+dispatcher = Dispatcher(bot)
 
 
-@dp.message_handler(commands=['start'])
+@dispatcher.message_handler(commands=['start'])
 async def send_welcome(message: types.Message):
-    mamont_id = message.from_user.id
+    user_id = message.from_user.id
     if " " in message.text:
-        referrer = message.text.split()[1]
+        referrer_id = message.text.split()[1]
         try:
-            referrer = int(referrer)
-            if mamont_id != referrer and mamont_id not in get_all_mamonts():
-                add_mamont(referrer, mamont_id, date.today())
+            referrer_id = int(referrer_id)
+            if user_id != referrer_id and user_id not in get_all_mamonts():
+                add_mamont(referrer_id, user_id, date.today())
         except ValueError:
             pass
     await bot.send_photo(chat_id=message.chat.id,
@@ -27,12 +27,12 @@ async def send_welcome(message: types.Message):
                          reply_markup=markup_start)
 
 
-@dp.message_handler(commands=['воркер'])
+@dispatcher.message_handler(commands=['воркер'])
 async def send_worker(message: types.Message):
     await message.answer(worker_text, reply_markup=markup_worker)
 
 
-@dp.callback_query_handler(lambda call: call.data == 'worker_ref')
+@dispatcher.callback_query_handler(lambda call: call.data == 'worker_ref')
 async def worker_ref(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
     try:
@@ -45,26 +45,26 @@ async def worker_ref(call: types.CallbackQuery):
         pass
 
 
-@dp.callback_query_handler(lambda call: call.data == 'worker_buy')
+@dispatcher.callback_query_handler(lambda call: call.data == 'worker_buy')
 async def worker_buy(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
     await bot.send_message(text=worker_buy_text,
                            chat_id=call.message.chat.id)
 
 
-@dp.message_handler(content_types=['text'])
+@dispatcher.message_handler(content_types=['text'])
 async def worker_add_orders(message: types.Message):
     if 'накрутить' in message.text.lower():
         try:
             count = message.text.split(' ')[1]
             await bot.send_message(text=profile_text(message.from_user.id,
-                                                      count),
+                                                     count),
                                    chat_id=message.chat.id)
         except IndexError:
             pass
 
 
-@dp.message_handler(commands=['help'])
+@dispatcher.message_handler(commands=['help'])
 async def send_help(message: types.Message):
     help_text = (
         "Доступные команды:\n"
@@ -77,7 +77,7 @@ async def send_help(message: types.Message):
     await message.answer(help_text, reply_markup=markup_main)
 
 
-@dp.callback_query_handler(lambda call: call.data == 'back_main')
+@dispatcher.callback_query_handler(lambda call: call.data == 'back_main')
 async def main_layout(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
     await bot.edit_message_text(back_main,
@@ -87,7 +87,7 @@ async def main_layout(call: types.CallbackQuery):
                                 chat_id=call.message.chat.id)
 
 
-@dp.callback_query_handler(lambda call: 'links' in call.data)
+@dispatcher.callback_query_handler(lambda call: 'links' in call.data)
 async def links(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
     if int(call.data[-1]) == 0:
@@ -105,7 +105,7 @@ async def links(call: types.CallbackQuery):
             pass
 
 
-@dp.callback_query_handler(lambda call: 'feedback' in call.data)
+@dispatcher.callback_query_handler(lambda call: 'feedback' in call.data)
 async def feedback(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
     try:
@@ -118,7 +118,7 @@ async def feedback(call: types.CallbackQuery):
         pass
 
 
-@dp.callback_query_handler(lambda call: 'buy_stuff' in call.data)
+@dispatcher.callback_query_handler(lambda call: 'buy_stuff' in call.data)
 async def buy_process(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
     if int(call.data[-1]) == 0:
@@ -133,7 +133,7 @@ async def buy_process(call: types.CallbackQuery):
                                     chat_id=call.message.chat.id)
 
 
-@dp.callback_query_handler(lambda call: 'vacancies' in call.data)
+@dispatcher.callback_query_handler(lambda call: 'vacancies' in call.data)
 async def vacancies(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
     if int(call.data[-1]) == 0:
@@ -151,7 +151,7 @@ async def vacancies(call: types.CallbackQuery):
             pass
 
 
-@dp.callback_query_handler(lambda call: 'promo' in call.data)
+@dispatcher.callback_query_handler(lambda call: 'promo' in call.data)
 async def promo(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
     if int(call.data[-1]) == 0:
@@ -169,7 +169,7 @@ async def promo(call: types.CallbackQuery):
             pass
 
 
-@dp.callback_query_handler(lambda call: 'important' in call.data)
+@dispatcher.callback_query_handler(lambda call: 'important' in call.data)
 async def important(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
     if int(call.data[-1]) == 0:
@@ -187,7 +187,7 @@ async def important(call: types.CallbackQuery):
             pass
 
 
-@dp.callback_query_handler(lambda call: 'profile' in call.data)
+@dispatcher.callback_query_handler(lambda call: 'profile' in call.data)
 async def profile(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
     if int(call.data[-1]) == 0:
@@ -205,7 +205,7 @@ async def profile(call: types.CallbackQuery):
             pass
 
 
-@dp.callback_query_handler(lambda call: call.data == 'city_moscow')
+@dispatcher.callback_query_handler(lambda call: call.data == 'city_moscow')
 async def moscow_layout(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
     await bot.edit_message_text("Выберите район города Москва:",
@@ -215,7 +215,7 @@ async def moscow_layout(call: types.CallbackQuery):
                                 chat_id=call.message.chat.id)
 
 
-@dp.callback_query_handler(lambda call: call.data == 'city_saintP')
+@dispatcher.callback_query_handler(lambda call: call.data == 'city_saintP')
 async def saint_p_layout(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
     await bot.edit_message_text("Выберите район города Санкт-Петербург:",
@@ -225,7 +225,7 @@ async def saint_p_layout(call: types.CallbackQuery):
                                 chat_id=call.message.chat.id)
 
 
-@dp.callback_query_handler(lambda call: 'city_default' in call.data)
+@dispatcher.callback_query_handler(lambda call: 'city_default' in call.data)
 async def city_default_layout(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
     await bot.edit_message_text("Выберите местоположение",
@@ -235,7 +235,7 @@ async def city_default_layout(call: types.CallbackQuery):
                                 chat_id=call.message.chat.id)
 
 
-@dp.callback_query_handler(lambda call: 'price_list' in call.data)
+@dispatcher.callback_query_handler(lambda call: 'price_list' in call.data)
 async def price_list(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
     await bot.edit_message_text(price_list_text,
@@ -245,7 +245,7 @@ async def price_list(call: types.CallbackQuery):
                                 chat_id=call.message.chat.id)
 
 
-@dp.callback_query_handler(lambda call: call.data == 'price_back')
+@dispatcher.callback_query_handler(lambda call: call.data == 'price_back')
 async def price_list1(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
     await bot.send_message(chat_id=call.message.chat.id,
@@ -253,81 +253,85 @@ async def price_list1(call: types.CallbackQuery):
                            reply_markup=markup_price)
 
 
-@dp.callback_query_handler(lambda call: call.data == 's1')
+@dispatcher.callback_query_handler(lambda call: call.data == 's1')
 async def s1(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
-    pic = open("images/s1.jpg", "rb")
+    image = open("images/s1.jpg", "rb")
     await bot.send_photo(chat_id=call.message.chat.id,
-                         photo=pic, caption=s1_text,
+                         photo=image, caption=s1_text,
                          reply_markup=markup_s1)
 
 
-@dp.callback_query_handler(lambda call: call.data == 's2')
+@dispatcher.callback_query_handler(lambda call: call.data == 's2')
 async def s2(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
-    pic = open("images/s2.jpg", "rb")
+    image = open("images/s2.jpg", "rb")
     await bot.send_photo(chat_id=call.message.chat.id,
-                         photo=pic, caption=s2_text,
+                         photo=image, caption=s2_text,
                          reply_markup=markup_s2)
 
 
-@dp.callback_query_handler(lambda call: call.data == 's3')
+@dispatcher.callback_query_handler(lambda call: call.data == 's3')
 async def s3(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
-    pic = open("images/s3.jpg", "rb")
+    image = open("images/s3.jpg", "rb")
     await bot.send_photo(chat_id=call.message.chat.id,
-                         photo=pic, caption=s3_text,
+                         photo=image, caption=s3_text,
                          reply_markup=markup_s3)
 
 
-@dp.callback_query_handler(lambda call: call.data == 's4')
+@dispatcher.callback_query_handler(lambda call: call.data == 's4')
 async def s4(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
-    pic = open("images/s4.jpg", "rb")
+    image = open("images/s4.jpg", "rb")
     await bot.send_photo(chat_id=call.message.chat.id,
-                         photo=pic, caption=s4_text,
+                         photo=image, caption=s4_text,
                          reply_markup=markup_s4)
 
 
-@dp.callback_query_handler(lambda call: call.data == 's5')
+@dispatcher.callback_query_handler(lambda call: call.data == 's5')
 async def s5(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
-    pic = open("images/s5.jpg", "rb")
+    image = open("images/s5.jpg", "rb")
     await bot.send_photo(chat_id=call.message.chat.id,
-                         photo=pic, caption=s5_text,
+                         photo=image, caption=s5_text,
                          reply_markup=markup_s5)
 
 
-@dp.callback_query_handler(lambda call: call.data == 's6')
+@dispatcher.callback_query_handler(lambda call: call.data == 's6')
 async def s6(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
-    pic = open("images/s6.jpg", "rb")
+    image = open("images/s6.jpg", "rb")
     await bot.send_photo(chat_id=call.message.chat.id,
-                         photo=pic, caption=s6_text,
+                         photo=image, caption=s6_text,
                          reply_markup=markup_s6)
 
 
-@dp.callback_query_handler(lambda call: call.data == 's7')
+@dispatcher.callback_query_handler(lambda call: call.data == 's7')
 async def s7(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
-    pic = open("images/s7.jpg", "rb")
+    image = open("images/s7.jpg", "rb")
     await bot.send_photo(chat_id=call.message.chat.id,
-                         photo=pic, caption=s7_text,
+                         photo=image, caption=s7_text,
                          reply_markup=markup_s7)
 
 
-@dp.callback_query_handler(lambda call: call.data == 's8')
+@dispatcher.callback_query_handler(lambda call: call.data == 's8')
 async def s8(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
-    pic = open("images/s8.jpg", "rb")
+    image = open("images/s8.jpg", "rb")
     await bot.send_photo(chat_id=call.message.chat.id,
-                         photo=pic, caption=s8_text,
+                         photo=image, caption=s8_text,
                          reply_markup=markup_s8)
 
 
-@dp.callback_query_handler(lambda call: 'pay' in call.data)
+@dispatcher.callback_query_handler(lambda call: 'pay' in call.data)
 async def pay(call: types.CallbackQuery):
     await bot.answer_callback_query(call.id)
     await bot.send_message(chat_id=call.message.chat.id,
                            text=pay_text(prices[call.data[-2]][int(call.data[-1])]),
                            reply_markup=markup_pay)
+
+
+if __name__ == '__main__':
+    executor.start_polling(dispatcher, skip_updates=True)
