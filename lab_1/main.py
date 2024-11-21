@@ -1,9 +1,11 @@
 from datetime import date
-from aiogram.utils.exceptions import MessageNotModified
+
 from aiogram import Bot, Dispatcher, executor, types
+from aiogram.utils.exceptions import MessageNotModified
+
+from buttons import *
 from config import *
 from utils import profile_text, ref_text, pay_text, get_all_mamonts, add_mamont
-from buttons import *
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
