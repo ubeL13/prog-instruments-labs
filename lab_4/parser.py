@@ -6,7 +6,8 @@ from playwright.sync_api import sync_playwright
 logging.basicConfig(
     filename='scraping.log',
     level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    encoding='utf-8'
 )
 
 
